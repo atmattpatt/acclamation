@@ -1,6 +1,7 @@
 'use strict';
 
 var config = require('../config');
+var Promiss = require('promise');
 var qr = require('qr-image');
 var redis = require('../redisClient');
 var uuid = require('uuid');
@@ -26,6 +27,21 @@ module.exports = function() {
 
   this.destroy = function () {
     redis.del('active_session_id');
+  };
+
+  this.find = function(sessionId) {
+    return new Promiss(function(resolve, reject) {
+      redis.sismember('acclamation.sessions', sessionId, function(err, res) {
+        if (err !== null) {
+          reject(err);
+        } else if (res === 1) {
+          id = sessionId;
+          resolve(self);
+        } else {
+          reject(new Error('Session not found'));
+        }
+      });
+    });
   };
 
   this.load = function (done) {
