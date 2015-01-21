@@ -16,9 +16,11 @@ router.get('/', function(req, res) {
   res.redirect('/session/new');
 });
 
-router.get('/moderator', function(req, res) {
+router.get('/moderator/:sessionId', function(req, res) {
   (new Session()).load(function(session) {
     if (session.id() === null) {
+      res.redirect('/session/new');
+    } else if (session.id() !== req.params.sessionId) {
       res.redirect('/session/new');
     } else {
       res.render('moderator');

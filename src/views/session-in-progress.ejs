@@ -17,7 +17,7 @@
           You can join the current session, or you must wait for the current session to end before beginning a new session.
         </p>
         <p>
-          <a href="/moderator" class="pure-button pure-button-primary r-button-sm">Join as Moderator</a>
+          <a href="/moderator/<%= session.id() %>" class="pure-button pure-button-primary r-button-sm">Join as Moderator</a>
           <a href="/client/<%= session.id() %>" class="pure-button r-button-sm">Join as Participant</a>
         </p>
       </div>

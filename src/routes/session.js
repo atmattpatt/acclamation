@@ -22,7 +22,7 @@ router.get('/new', function(req, res) {
 
 router.get('/start', function(req, res) {
   (new Session()).create(function(session) {
-    res.redirect('/moderator');
+    res.redirect('/moderator/' + session.id());
   });
 });
 
@@ -58,7 +58,9 @@ router.get('/export', function(req, res) {
 });
 
 router.get('/end', function(req, res) {
-  res.render('session-end');
+  (new Session()).create(function(session) {
+    res.render('session-end', { session: session });
+  });
 });
 
 router.get('/destroy', function(req, res) {
