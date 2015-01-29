@@ -9,14 +9,8 @@ var SessionState = require('../models/sessionState');
 
 var events = new EventPublisher('acclamation:events');
 
-router.get('/new', function(req, res) {
-  (new Session()).load(function(session) {
-    if (session.id() === null) {
-      res.render('session-start');
-    } else {
-      res.render('session-in-progress', { session: session });
-    }
-  });
+router.get('/', function(req, res) {
+  res.render('session/index');
 });
 
 router.get('/start', function(req, res) {
@@ -60,14 +54,14 @@ router.get('/:sessionId/export', function(req, res) {
 
 router.get('/:sessionId/end', function(req, res) {
   (new Session()).find(req.params.sessionId).then(function(session) {
-    res.render('session-end', {session: session});
+    res.render('session/end', {session: session});
   });
 });
 
 router.get('/:sessionId/destroy', function(req, res) {
   (new Session()).find(req.params.sessionId).then(function(session) {
     session.destroy().then(function() {
-      res.redirect('/session/new');
+      res.redirect('/session');
     });
   });
 });
