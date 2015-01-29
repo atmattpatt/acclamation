@@ -17,26 +17,18 @@ router.get('/', function(req, res) {
 });
 
 router.get('/moderator/:sessionId', function(req, res) {
-  (new Session()).load(function(session) {
-    if (session.id() === null) {
-      res.redirect('/session/new');
-    } else if (session.id() !== req.params.sessionId) {
-      res.redirect('/session/new');
-    } else {
-      res.render('moderator');
-    }
+  (new Session()).find(req.params.sessionId).then(function(session) {
+    res.render('moderator', {session: session});
+  }).catch(function() {
+    res.redirect('/session/new');
   });
 });
 
 router.get('/client/:sessionId', function(req, res) {
-  (new Session()).load(function(session) {
-    if (session.id() === null) {
-      res.redirect('/session/new');
-    } else if (session.id() !== req.params.sessionId) {
-      res.redirect('/session/new');
-    } else {
-      res.render('client');
-    }
+  (new Session()).find(req.params.sessionId).then(function(session) {
+    res.render('client');
+  }).catch(function() {
+    res.redirect('/session/new');
   });
 });
 

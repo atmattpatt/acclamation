@@ -14,19 +14,29 @@ module.exports = function() {
     return id;
   };
 
-  this.create = function(done) {
+  this.create = function() {
     id = uuid.v4();
-    redis.set('active_session_id', id, function(err, res) {
-      if (err !== null) {
-        throw err;
-      }
-
-      done(self);
+    return new Promiss(function(resolve, reject) {
+      redis.sadd('acclamation.sessions', id, function(err, res) {
+        if (err !== null) {
+          reject(err);
+        } else {
+          resolve(self);
+        }
+      });
     });
   };
 
   this.destroy = function () {
-    redis.del('active_session_id');
+    return new Promiss(function(resolve, reject) {
+      redis.srem('acclamation.sessions', id, function(err, res) {
+        if (err !== null) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   };
 
   this.find = function(sessionId) {

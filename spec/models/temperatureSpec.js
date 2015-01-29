@@ -9,11 +9,13 @@ describe('Temperature', function() {
     var reset = 0;
 
     runs(function() {
-      redis.hset('temperature', '1', 0, function() { reset++; });
-      redis.hset('temperature', '2', 0, function() { reset++; });
-      redis.hset('temperature', '3', 0, function() { reset++; });
-      redis.hset('temperature', '4', 0, function() { reset++; });
-      redis.hset('temperature', '5', 0, function() { reset++; });
+      redis.flushdb(function() {
+        redis.hset('temperature', '1', 0, function() { reset++; });
+        redis.hset('temperature', '2', 0, function() { reset++; });
+        redis.hset('temperature', '3', 0, function() { reset++; });
+        redis.hset('temperature', '4', 0, function() { reset++; });
+        redis.hset('temperature', '5', 0, function() { reset++; });
+      });
     });
     waitsFor(function() {
       return reset === 5;
