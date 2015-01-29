@@ -23,7 +23,7 @@ describe('Session', function() {
       var session;
 
       runs(function() {
-        redis.sadd('acclamation.sessions', 'test-session-id', function() {
+        redis.sadd('acclamation:sessions', 'test-session-id', function() {
           doneAdding = true;
         });
       });
@@ -79,7 +79,7 @@ describe('Session', function() {
       }, 1000);
     });
 
-    it('adds the session UUID to acclamation.sessions', function() {
+    it('adds the session UUID to acclamation:sessions', function() {
       var done = false;
       var session;
 
@@ -103,7 +103,7 @@ describe('Session', function() {
     beforeEach(function() {
       var done = false;
       runs(function() {
-        redis.sadd('acclamation.sessions', 'test-session-id', function() {
+        redis.sadd('acclamation:sessions', 'test-session-id', function() {
           done = true;
         });
       });
@@ -112,14 +112,14 @@ describe('Session', function() {
       }, 1000);
     });
 
-    it('removes the session UUID from acclamation.sessions', function() {
+    it('removes the session UUID from acclamation:sessions', function() {
       var done = false;
       var session;
       runs(function() {
         session = new Session();
         session.find('test-session-id').then(function() {
           session.destroy().then(function() {
-            redis.sismember('acclamation.sessions', 'test-session-id', function(err, res) {
+            redis.sismember('acclamation:sessions', 'test-session-id', function(err, res) {
               expect(res).toEqual(0);
               done = true;
             });

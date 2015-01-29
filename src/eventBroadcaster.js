@@ -12,7 +12,7 @@ EventBroadcaster.prototype.start = function() {
 
   this.redis.on('message', function(channel, message) {
     var parsed, event, data;
-    if (channel !== 'acclamation.events') {
+    if (channel !== 'acclamation:events') {
       return;
     }
 
@@ -39,7 +39,7 @@ EventBroadcaster.prototype.start = function() {
     console.log('Broadcasting event', event, data);
     app.io.broadcast(event, data);
   });
-  this.redis.subscribe('acclamation.events');
+  this.redis.subscribe('acclamation:events');
 };
 
 module.exports = EventBroadcaster;

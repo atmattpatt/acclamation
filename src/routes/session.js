@@ -7,7 +7,7 @@ var Session = require('../models/session');
 var SessionExport = require('../models/sessionExport');
 var SessionState = require('../models/sessionState');
 
-var events = new EventPublisher('acclamation.events');
+var events = new EventPublisher('acclamation:events');
 
 router.get('/new', function(req, res) {
   (new Session()).load(function(session) {

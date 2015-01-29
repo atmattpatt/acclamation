@@ -10,7 +10,7 @@ var Card = require('../models/card');
 var CardVote = require('../models/cardVote');
 var CardRepository = require('../models/card_repository');
 
-var events = new EventPublisher('acclamation.events');
+var events = new EventPublisher('acclamation:events');
 
 router.get('/', function(req, res) {
   res.redirect('/session/new');

@@ -17,7 +17,7 @@ module.exports = function() {
   this.create = function() {
     id = uuid.v4();
     return new Promiss(function(resolve, reject) {
-      redis.sadd('acclamation.sessions', id, function(err, res) {
+      redis.sadd('acclamation:sessions', id, function(err, res) {
         if (err !== null) {
           reject(err);
         } else {
@@ -29,7 +29,7 @@ module.exports = function() {
 
   this.destroy = function () {
     return new Promiss(function(resolve, reject) {
-      redis.srem('acclamation.sessions', id, function(err, res) {
+      redis.srem('acclamation:sessions', id, function(err, res) {
         if (err !== null) {
           reject(err);
         } else {
@@ -41,7 +41,7 @@ module.exports = function() {
 
   this.find = function(sessionId) {
     return new Promiss(function(resolve, reject) {
-      redis.sismember('acclamation.sessions', sessionId, function(err, res) {
+      redis.sismember('acclamation:sessions', sessionId, function(err, res) {
         if (err !== null) {
           reject(err);
         } else if (res === 1) {
