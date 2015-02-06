@@ -1,7 +1,7 @@
 'use strict';
 
 var config = require('../config');
-var Promiss = require('promise');
+var promise = require('promise');
 var qr = require('qr-image');
 var redis = require('../redisClient');
 var uuid = require('uuid');
@@ -16,7 +16,7 @@ module.exports = function() {
 
   this.create = function() {
     id = uuid.v4();
-    return new Promiss(function(resolve, reject) {
+    return new promise(function(resolve, reject) {
       redis.sadd('acclamation:sessions', id, function(err, res) {
         if (err !== null) {
           reject(err);
@@ -28,7 +28,7 @@ module.exports = function() {
   };
 
   this.destroy = function () {
-    return new Promiss(function(resolve, reject) {
+    return new promise(function(resolve, reject) {
       redis.srem('acclamation:sessions', id, function(err, res) {
         if (err !== null) {
           reject(err);
@@ -40,7 +40,7 @@ module.exports = function() {
   };
 
   this.find = function(sessionId) {
-    return new Promiss(function(resolve, reject) {
+    return new promise(function(resolve, reject) {
       redis.sismember('acclamation:sessions', sessionId, function(err, res) {
         if (err !== null) {
           reject(err);
