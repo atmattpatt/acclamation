@@ -54,16 +54,6 @@ module.exports = function() {
     });
   };
 
-  this.load = function (done) {
-    redis.get('active_session_id', function(err, res) {
-      if (err !== null) {
-        throw err;
-      }
-      id = res;
-      done(self);
-    });
-  };
-
   this.qr = function() {
     return qr.image(config.server.baseUrl + '/client/' + this.id(), { type: 'png', size: 8 });
   };
