@@ -20,7 +20,7 @@ var Temperature = function(moderator) {
   };
 
   this.load = function() {
-    return $.get('/temperature');
+    return $.get('/session/' + moderator.sessionId + '/temperature');
   };
 
   this.initializeChart = function(data) {

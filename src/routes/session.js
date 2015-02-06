@@ -6,6 +6,7 @@ var EventPublisher = require('../eventPublisher');
 var Session = require('../models/session');
 var SessionExport = require('../models/sessionExport');
 var SessionState = require('../models/sessionState');
+var Temperature = require('../models/temperature');
 
 var events = new EventPublisher('acclamation:events');
 
@@ -82,6 +83,29 @@ router.post('/state', function(req, res) {
   });
 
   res.send(202);
+});
+
+router.get('/:sessionId/temperature', function(req, res) {
+  (new Session()).find(req.params.sessionId).then(function(session) {
+    (new Temperature(session)).load().then(function(temperature) {
+      res.json(temperature.getValues());
+    });
+  }).catch(function() {
+    res.send(404);
+  });
+});
+
+router.post('/:sessionId/temperature/vote/:value', function(req, res) {
+  (new Session()).find(req.params.sessionId).then(function(session) {
+    (new Temperature(session)).increment(req.params.value).then(function(temperature) {
+      temperature.load().then(function() {
+        events.publish('temperature', temperature.getValues());
+      });
+      res.send(202);
+    });
+  }).catch(function() {
+    res.send(404);
+  });
 });
 
 module.exports = router;

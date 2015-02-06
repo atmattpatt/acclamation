@@ -5,7 +5,6 @@ var router = express.Router();
 
 var EventPublisher = require('../eventPublisher');
 var Session = require('../models/session');
-var Temperature = require('../models/temperature');
 var Card = require('../models/card');
 var CardVote = require('../models/cardVote');
 var CardRepository = require('../models/card_repository');
@@ -30,22 +29,6 @@ router.get('/client/:sessionId', function(req, res) {
   }).catch(function() {
     res.redirect('/session');
   });
-});
-
-router.get('/temperature', function(req, res) {
-  (new Temperature()).load(function(temperature) {
-    res.json(temperature.getValues());
-  });
-});
-
-router.post('/temperature/vote/:value', function(req, res) {
-  (new Temperature()).increment(req.params.value, function(temperature) {
-    temperature.load(function(temperature) {
-      events.publish('temperature', temperature.getValues());
-    });
-  });
-
-  res.send(202);
 });
 
 router.get('/cards', function(req, res) {

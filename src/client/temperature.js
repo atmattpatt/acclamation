@@ -19,7 +19,7 @@ var Temperature = function(client) {
 
   this.vote = function() {
     var value = $(this).val();
-    $.post('/temperature/vote/' + value)
+    $.post('/session/' + client.sessionId + '/temperature/vote/' + value)
       .success(self.done)
       .error(self.error);
   };
