@@ -4,7 +4,7 @@ var express = require('express');
 var router = express.Router();
 
 var EventPublisher = require('../eventPublisher');
-var Session = require('../models/session');
+var SessionResource = require('../models/sessionResource');
 var Card = require('../models/card');
 var CardVote = require('../models/cardVote');
 var CardRepository = require('../models/card_repository');
@@ -16,7 +16,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/moderator/:sessionId', function(req, res) {
-  (new Session()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource()).find(req.params.sessionId).then(function(session) {
     res.render('moderator', {session: session});
   }).catch(function() {
     res.redirect('/session');
@@ -24,7 +24,7 @@ router.get('/moderator/:sessionId', function(req, res) {
 });
 
 router.get('/client/:sessionId', function(req, res) {
-  (new Session()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource()).find(req.params.sessionId).then(function(session) {
     res.render('client');
   }).catch(function() {
     res.redirect('/session');

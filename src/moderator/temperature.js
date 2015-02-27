@@ -12,7 +12,7 @@ var Temperature = function(moderator) {
   this.chart = null;
 
   this.initialize = function() {
-    self.load().then(self.render);
+    self.load().then(self.render).then(self.socketBind);
   };
 
   this.socketBind = function() {
@@ -51,8 +51,6 @@ var Temperature = function(moderator) {
   this.normalizeKey = function(key) {
     return (Number(key) - 1);
   };
-
-  this.initialize();
 };
 
 module.exports = Temperature;

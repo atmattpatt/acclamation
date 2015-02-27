@@ -15,14 +15,14 @@
         <li><a href="#" class="session-state" rel="allowNewCards" data-state="true">Open to New Cards</a></li>
         <li><a href="#" class="session-state" rel="allowVoting" data-state="false">Close Voting</a></li>
         <li><a href="#" class="session-state" rel="allowVoting" data-state="true">Open Voting</a></li>
-        <li><a href="/session/<%= session.id() %>/end" class="end-session">End Session</a></li>
+        <li><a href="/session/<%= session.id %>/end" class="end-session">End Session</a></li>
       </ul>
     </menu>
     <div id="moderator" class="pure-g">
       <div id="left-column" class="pure-u-1-5">
         <section id ="clock">&nbsp;</section>
         <section id="qr-code">
-        <img src="/session/<%= session.id() %>/qr_code" alt="QR code to join the retro"/>
+        <img src="/session/<%= session.id %>/qr_code" alt="QR code to join the retro"/>
         </section>
         <section id="temperature-section">
           <canvas id="temperature"></canvas>

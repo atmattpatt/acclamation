@@ -9,7 +9,6 @@ var Temperature = require('./temperature');
 var Moderator = function() {
   var self = this;
 
-  this.sessionId = self.detectSessionId();
   this.socket = io.connect();
   this.cardWall = new CardWall(this);
   this.clock = new Clock(this);
@@ -17,14 +16,15 @@ var Moderator = function() {
   this.temperature = new Temperature(this);
 
   this.initialize = function() {
+    self.sessionId = self.detectSessionId();
     self.socket.emit('ready');
-    self.cardWall.socketBind();
-    self.menu.socketBind();
-    self.temperature.socketBind();
+    self.cardWall.initialize();
+    self.menu.initialize();
+    self.temperature.initialize();
   };
 
   this.detectSessionId = function() {
-    var matches = window.location.pathname.match(/\/moderator\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}[a-f0-9]{4}-[a-f0-9]{12})/i);
+    var matches = window.location.pathname.match(/\/moderator\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i);
     if (matches === null) {
       return null;
     } else {

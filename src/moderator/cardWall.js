@@ -6,7 +6,7 @@ var CardWall = function(moderator) {
   this.voting = false;
 
   this.initialize = function() {
-    self.load().then(self.renderAll);
+    self.load().then(self.renderAll).then(self.socketBind);
     $(self.setupEvents);
   };
 
@@ -19,7 +19,7 @@ var CardWall = function(moderator) {
   };
 
   this.load = function() {
-    $.get('/session/state').then(self.setState);
+    $.get('/session/' + moderator.sessionId + '/state').then(self.setState);
     return $.get('/cards');
   };
 
@@ -122,8 +122,6 @@ var CardWall = function(moderator) {
     self.setVoting(state.allowVoting);
     self.sortCards();
   };
-
-  this.initialize();
 };
 
 module.exports = CardWall;
