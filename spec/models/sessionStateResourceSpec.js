@@ -34,13 +34,13 @@ describe('SessionStateResource', function() {
     });
   });
 
-  describe('fetch', function() {
+  describe('get()', function() {
     it('loads state from redis', function() {
       var done = false;
 
       runs(function() {
         var sessionStateResource = new SessionStateResource(session);
-        sessionStateResource.fetch().then(function(state) {
+        sessionStateResource.get().then(function(state) {
           expect(state.allowNewCards).toEqual(true);
           expect(state.allowVoting).toEqual(false);
           done = true;
@@ -50,15 +50,15 @@ describe('SessionStateResource', function() {
     });
   });
 
-  describe('update', function() {
+  describe('update()', function() {
     it('updates state values', function() {
       var done = false;
 
       runs(function() {
         var sessionStateResource = new SessionStateResource(session);
         sessionStateResource.update({
-          allowNewCards: false,
-          allowVoting: true
+          allowNewCards: 'false',
+          allowVoting: 'true'
         }).then(function(state) {
           expect(state.allowNewCards).toEqual(false);
           expect(state.allowVoting).toEqual(true);

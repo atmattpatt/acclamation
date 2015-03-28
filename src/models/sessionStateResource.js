@@ -9,7 +9,7 @@ var SessionStateResource = function(session) {
   this.redisKey = 'acclamation:session:' + session.id + ':state';
 };
 
-SessionStateResource.prototype.fetch = function() {
+SessionStateResource.prototype.get = function() {
   var self = this;
   return new promise(function(resolve, reject) {
     redis.get(self.redisKey, function(err, res) {
@@ -29,12 +29,20 @@ SessionStateResource.prototype.fetch = function() {
 SessionStateResource.prototype.update = function(values) {
   var self = this;
   return new promise(function(resolve, reject) {
-    redis.set(self.redisKey, JSON.stringify(values), function(err, res) {
-      if (err !== null) {
-        reject(err);
-      } else {
-        resolve(new SessionState(values));
+    self.get().then(function(state) {
+      for (var key in state) {
+        if (state.hasOwnProperty(key) && values[key] !== undefined) {
+          state[key] = (values[key] === 'true');
+        }
       }
+
+      redis.set(self.redisKey, JSON.stringify(state), function(err, res) {
+        if (err !== null) {
+          reject(err);
+        } else {
+          resolve(new SessionState(state));
+        }
+      });
     });
   });
 };

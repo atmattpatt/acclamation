@@ -56,7 +56,7 @@ var CardWall = function(moderator) {
     var $primary = $(e.target);
     var $secondary = $(ui.draggable[0]);
 
-    $.post('/cards/' + $secondary.data('card-id') + '/fold', {parent: $primary.data('card-id')});
+    $.post('/session/' + moderator.sessionId + '/cards/' + $secondary.data('card-id') + '/fold', {parent: $primary.data('card-id')});
   };
 
   this.foldCard = function(card) {
@@ -90,7 +90,7 @@ var CardWall = function(moderator) {
     var $card = $input.closest('.card');
     var title = $input.val();
 
-    $.post('/cards/' + $card.data('card-id'), {title: title}).then($input.remove);
+    $.post('/session/' + moderator.sessionId + '/cards/' + $card.data('card-id'), {title: title}).then($input.remove);
   };
 
   this.updateCard = function(card) {

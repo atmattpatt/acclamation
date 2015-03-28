@@ -16,7 +16,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/moderator/:sessionId', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource(req.params.sessionId)).get().then(function(session) {
     res.render('moderator', {session: session});
   }).catch(function() {
     res.redirect('/session');
@@ -24,7 +24,7 @@ router.get('/moderator/:sessionId', function(req, res) {
 });
 
 router.get('/client/:sessionId', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource(req.params.sessionId)).get().then(function(session) {
     res.render('client');
   }).catch(function() {
     res.redirect('/session');
@@ -53,31 +53,6 @@ router.post('/cards', function(req, res) {
   } else {
     res.send(422);
   }
-});
-
-router.post('/cards/:cardId', function(req, res) {
-  var card = new Card();
-  card.load(req.params.cardId, function(card) {
-    card.title = req.param('title');
-    card.save(function(card) {
-      events.publish('card.updated', card.toPlainObject());
-    });
-  });
-
-  res.send(202);
-});
-
-router.post('/cards/:cardId/fold', function(req, res) {
-  var card = new Card();
-  card.load(req.params.cardId, function(card) {
-    card.type = 'child-card';
-    card.parent = req.param('parent');
-    card.save(function(card) {
-      events.publish('card.folded', card.toPlainObject());
-    });
-  });
-
-  res.send(202);
 });
 
 router.post('/cards/:cardId/vote', function(req, res) {

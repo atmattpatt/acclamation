@@ -34,13 +34,13 @@ describe('TemperatureResource', function() {
     });
   });
 
-  describe('fetch()', function() {
+  describe('get()', function() {
     it('loads the temperature values from redis', function() {
       var done = false;
 
       runs(function() {
         var temperatureResource = new TemperatureResource(session);
-        temperatureResource.fetch().then(function(temperature) {
+        temperatureResource.get().then(function(temperature) {
           expect(temperature.values['1']).toEqual(2);
           expect(temperature.values['2']).toEqual(4);
           expect(temperature.values['3']).toEqual(8);
@@ -60,7 +60,7 @@ describe('TemperatureResource', function() {
       runs(function() {
         var temperatureResource = new TemperatureResource(session);
         temperatureResource.increment('4').then(function() {
-          temperatureResource.fetch().then(function(temperature) {
+          temperatureResource.get().then(function(temperature) {
             expect(temperature.values['1']).toEqual(2);
             expect(temperature.values['2']).toEqual(4);
             expect(temperature.values['3']).toEqual(8);

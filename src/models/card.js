@@ -9,7 +9,7 @@ module.exports = function(options) {
 
   options = options || {};
 
-  this.id = null;
+  this.id = options.id;
   this.type = options.type || 'card';
   this.topic = options.topic;
   this.title = options.title;

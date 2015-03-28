@@ -9,7 +9,7 @@ var TemperatureResource = function(session) {
   this.redisKey = 'acclamation:session:' + session.id + ':temperature';
 };
 
-TemperatureResource.prototype.fetch = function() {
+TemperatureResource.prototype.get = function() {
   var self = this;
   return new promise(function(resolve, reject) {
     redis.hgetall(self.redisKey, function(err, res) {

@@ -2,7 +2,10 @@
 'use strict';
 
 var redis = require('../../src/redisClient');
+var CardResource = require('../../src/models/cardResource');
 var SessionResource = require('../../src/models/sessionResource');
+var SessionStateResource = require('../../src/models/sessionStateResource');
+var TemperatureResource = require('../../src/models/temperatureResource');
 
 describe('SessionResource', function() {
   beforeEach(function() {
@@ -13,7 +16,14 @@ describe('SessionResource', function() {
     waitsFor(function() { return done === true; }, 1000);
   });
 
-  describe('find()', function() {
+  describe('constructor', function() {
+    it('takes a sessionId', function() {
+      var sessionResource = new SessionResource('test-session-id');
+      expect(sessionResource.id).toEqual('test-session-id');
+    });
+  });
+
+  describe('get()', function() {
     it('resolves to a new Session instance if the session exists', function() {
       var doneAdding = false, doneFinding = false;
 
@@ -25,7 +35,7 @@ describe('SessionResource', function() {
       waitsFor(function() { return doneAdding === true; }, 1000);
 
       runs(function() {
-        (new SessionResource()).find('test-session-id').then(function(session) {
+        (new SessionResource('test-session-id')).get().then(function(session) {
           expect(session.id).toEqual('test-session-id');
           doneFinding = true;
         });
@@ -37,7 +47,7 @@ describe('SessionResource', function() {
       var done = false;
 
       runs(function() {
-        (new SessionResource()).find('non-existent-session').catch(function(err) {
+        (new SessionResource('non-existent-session')).get().catch(function(err) {
           expect(err.message).toEqual('Session not found');
           done = true;
         });
@@ -61,18 +71,59 @@ describe('SessionResource', function() {
       waitsFor(function() { return done === true; }, 1000);
     });
 
+    it('tracks the sessionId', function() {
+      var done = false;
+
+      runs(function() {
+        var sessionResource = new SessionResource();
+        sessionResource.create().then(function(session) {
+          expect(sessionResource.id).toEqual(session.id);
+          done = true;
+        });
+      });
+      waitsFor(function() { return done === true; }, 1000);
+    });
+
     it('adds the session UUID to acclamation:sessions', function() {
       var done = false;
 
       runs(function() {
         (new SessionResource()).create().then(function(session) {
-          (new SessionResource()).find(session.id).then(function(foundSession) {
+          (new SessionResource(session.id)).get().then(function(foundSession) {
             expect(foundSession.id).toEqual(session.id);
             done = true;
           });
         });
       });
       waitsFor(function() { return done === true; }, 1000);
+    });
+  });
+
+  describe('temperature()', function() {
+    it('returns a TemperatureResource for the session', function() {
+      var sessionResource = new SessionResource('test-session-id');
+      var temperatureResource = sessionResource.temperature();
+      expect(temperatureResource.constructor).toEqual(TemperatureResource);
+      expect(temperatureResource.session).toEqual(sessionResource);
+    });
+  });
+
+  describe('sessionState()', function() {
+    it('returns a SessionStateResource for the session', function() {
+      var sessionResource = new SessionResource('test-session-id');
+      var sessionStateResource = sessionResource.sessionState();
+      expect(sessionStateResource.constructor).toEqual(SessionStateResource);
+      expect(sessionStateResource.session).toEqual(sessionResource);
+    });
+  });
+
+  describe('card()', function() {
+    it('returns a CardResource for the session and card requested', function() {
+      var sessionResource = new SessionResource('test-session-id');
+      var cardResource = sessionResource.card('test-card-id');
+      expect(cardResource.constructor).toEqual(CardResource);
+      expect(cardResource.session).toEqual(sessionResource);
+      expect(cardResource.id).toEqual('test-card-id');
     });
   });
 });

@@ -5,8 +5,6 @@ var router = express.Router();
 var EventPublisher = require('../eventPublisher');
 var SessionResource = require('../models/sessionResource');
 var SessionExport = require('../models/sessionExport');
-var SessionStateResource = require('../models/sessionStateResource');
-var TemperatureResource = require('../models/temperatureResource');
 
 var events = new EventPublisher('acclamation:events');
 
@@ -21,7 +19,7 @@ router.get('/start', function(req, res) {
 });
 
 router.get('/:sessionId/qr_code', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource(req.params.sessionId)).get().then(function(session) {
     var qr = session.qr();
     res.type('image/png');
     qr.on('data', function(chunk) {
@@ -36,7 +34,7 @@ router.get('/:sessionId/qr_code', function(req, res) {
 });
 
 router.get('/:sessionId/export', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource(req.params.sessionId)).get().then(function(session) {
     (new SessionExport(function(exportData) {
       var today = new Date();
       var filename = 'acclamation_session_' +
@@ -54,7 +52,7 @@ router.get('/:sessionId/export', function(req, res) {
 });
 
 router.get('/:sessionId/end', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource(req.params.sessionId)).get().then(function(session) {
     res.render('session/end', {session: session});
   }).catch(function() {
     res.send(404);
@@ -62,7 +60,7 @@ router.get('/:sessionId/end', function(req, res) {
 });
 
 router.get('/:sessionId/destroy', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
+  (new SessionResource(req.params.sessionId)).get().then(function(session) {
     session.destroy().then(function() {
       res.redirect('/session');
     });
@@ -72,23 +70,20 @@ router.get('/:sessionId/destroy', function(req, res) {
 });
 
 router.get('/:sessionId/state', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
-    (new SessionStateResource(session)).fetch().then(function(state) {
-      res.json(state);
-    });
+  (new SessionResource(req.params.sessionId)).sessionState().get().then(function(state) {
+    res.json(state);
   }).catch(function() {
     res.send(404);
   });
 });
 
 router.post('/:sessionId/state', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
-    (new SessionStateResource(session)).update({
-      allowNewCards: req.param('allowNewCards'),
-      allowVoting: req.param('allowVoting')
-    }).then(function(state) {
-      events.publish('sessionState.changed', state);
-    });
+  var sessionResource = new SessionResource(req.params.sessionId);
+  sessionResource.sessionState().update({
+    allowNewCards: req.param('allowNewCards'),
+    allowVoting: req.param('allowVoting')
+  }).then(function(state) {
+    events.publish('sessionState.changed', state);
     res.send(202);
   }).catch(function() {
     res.send(404);
@@ -96,26 +91,44 @@ router.post('/:sessionId/state', function(req, res) {
 });
 
 router.get('/:sessionId/temperature', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
-    (new TemperatureResource(session)).load().then(function(temperature) {
-      res.json(temperature.getValues());
-    });
+  (new SessionResource(req.params.sessionId)).temperature().get().then(function(temperature) {
+    res.json(temperature.values);
   }).catch(function() {
     res.send(404);
   });
 });
 
 router.post('/:sessionId/temperature/vote/:value', function(req, res) {
-  (new SessionResource()).find(req.params.sessionId).then(function(session) {
-    (new TemperatureResource(session)).increment(req.params.value).then(function(temperature) {
-      temperature.load().then(function() {
-        events.publish('temperature', temperature.getValues());
-      });
-      res.send(202);
+  var sessionResource = new SessionResource(req.params.sessionId);
+  sessionResource.temperature().get().then(function(temperature) {
+    sessionResource.temperature().get().then(function() {
+      events.publish('temperature', temperature.getValues());
     });
+    res.send(202);
   }).catch(function() {
     res.send(404);
   });
+});
+
+router.post('/:sessionId/cards/:cardId', function(req, res) {
+  (new SessionResource(req.params.sessionId)).card(req.params.cardId).update({
+    title: req.param('title')
+  }).then(function (card) {
+    events.publish('card.updated', card);
+  });
+
+  res.send(202);
+});
+
+router.post('/:sessionId/cards/:cardId/fold', function(req, res) {
+  (new SessionResource(req.params.sessionId)).card(req.params.cardId).update({
+    type: 'child-card',
+    parent: req.param('parent')
+  }).then(function (card) {
+    events.publish('card.folded', card);
+  });
+
+  res.send(202);
 });
 
 module.exports = router;
