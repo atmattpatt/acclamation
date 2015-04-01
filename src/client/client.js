@@ -34,7 +34,7 @@ var Client = function() {
       next = self.initSession;
     }
 
-    self.cardWall.socketBind();
+    self.cardWall.initialize();
     self.sessionManager.socketBind();
 
     $(function() {

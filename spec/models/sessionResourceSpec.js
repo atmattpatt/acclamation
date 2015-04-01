@@ -3,6 +3,7 @@
 
 var redis = require('../../src/redisClient');
 var CardResource = require('../../src/models/cardResource');
+var CardsResource = require('../../src/models/cardsResource');
 var SessionResource = require('../../src/models/sessionResource');
 var SessionStateResource = require('../../src/models/sessionStateResource');
 var TemperatureResource = require('../../src/models/temperatureResource');
@@ -124,6 +125,15 @@ describe('SessionResource', function() {
       expect(cardResource.constructor).toEqual(CardResource);
       expect(cardResource.session).toEqual(sessionResource);
       expect(cardResource.id).toEqual('test-card-id');
+    });
+  });
+
+  describe('cards()', function() {
+    it('returns a CardsResource for the session', function() {
+      var sessionResource = new SessionResource('test-session-id');
+      var cardsResource = sessionResource.cards();
+      expect(cardsResource.constructor).toEqual(CardsResource);
+      expect(cardsResource.session).toEqual(sessionResource);
     });
   });
 });

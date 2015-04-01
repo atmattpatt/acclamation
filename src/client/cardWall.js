@@ -6,8 +6,11 @@ var CardWall = function(client) {
 
   $(function() {
     $cardWall = $('#cardwall');
-    self.loadAll();
   });
+
+  this.initialize = function() {
+    self.loadAll().success(self.rendarAll).error(self.error).then(self.socketBind);
+  };
 
   this.on = function() {
     $cardWall.show();
@@ -18,9 +21,7 @@ var CardWall = function(client) {
   };
 
   this.loadAll = function() {
-    return $.get('/cards')
-      .success(self.renderAll)
-      .error(self.error);
+    return $.get('/session/' + client.sessionId + '/cards');
   };
 
   this.renderAll = function(data) {

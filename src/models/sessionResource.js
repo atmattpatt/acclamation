@@ -4,6 +4,7 @@ var promise = require('promise');
 var redis = require('../redisClient');
 var uuid = require('uuid');
 var CardResource = require('./cardResource');
+var CardsResource = require('./cardsResource');
 var Session = require('./session');
 var SessionStateResource = require('./sessionStateResource');
 var TemperatureResource = require('./temperatureResource');
@@ -45,6 +46,10 @@ SessionResource.prototype.create = function() {
 
 SessionResource.prototype.card = function(cardId) {
   return new CardResource(this, cardId);
+};
+
+SessionResource.prototype.cards = function() {
+  return new CardsResource(this);
 };
 
 SessionResource.prototype.sessionState = function() {

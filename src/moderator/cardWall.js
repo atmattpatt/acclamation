@@ -20,11 +20,11 @@ var CardWall = function(moderator) {
 
   this.load = function() {
     $.get('/session/' + moderator.sessionId + '/state').then(self.setState);
-    return $.get('/cards');
+    return $.get('/session/' + moderator.sessionId + '/cards');
   };
 
-  this.renderAll = function(data) {
-    $.each(data.cards, function(id, card) {
+  this.renderAll = function(cards) {
+    $.each(cards, function(id, card) {
       self.appendCard(card);
     });
     self.sortCards();

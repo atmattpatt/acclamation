@@ -100,9 +100,28 @@ router.get('/:sessionId/temperature', function(req, res) {
 
 router.post('/:sessionId/temperature/vote/:value', function(req, res) {
   var sessionResource = new SessionResource(req.params.sessionId);
-  sessionResource.temperature().get().then(function(temperature) {
-    sessionResource.temperature().get().then(function() {
-      events.publish('temperature', temperature.getValues());
+  sessionResource.temperature().increment(req.params.value).then(function(temperatureResource) {
+    temperatureResource.get().then(function(temperature) {
+      events.publish('temperature', temperature.values);
+    });
+    res.send(202);
+  }).catch(function() {
+    res.send(404);
+  });
+});
+
+router.get('/:sessionId/cards', function(req, res) {
+  (new SessionResource(req.params.sessionId)).cards().all().then(function (cards) {
+    res.json(cards);
+  }).catch(function() {
+    res.send(404);
+  });
+});
+
+router.post('/:sessionId/cards', function(req, res) {
+  (new SessionResource(req.params.sessionId)).cards().create(req.param('card')).then(function (card) {
+    card.get().then(function(card) {
+      events.publish('card.created', card);
     });
     res.send(202);
   }).catch(function() {

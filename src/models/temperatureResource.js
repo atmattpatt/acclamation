@@ -20,7 +20,7 @@ TemperatureResource.prototype.get = function() {
       } else {
         if (typeof res === 'object' && res !== null) {
           ['1', '2', '3', '4', '5'].map(function(key) {
-            values[key] = Number(res[key]);
+            values[key] = Number(res[key]) || 0;
           });
         }
 
@@ -38,7 +38,7 @@ TemperatureResource.prototype.increment = function(key) {
       if (err !== null) {
         reject(err);
       } else {
-        resolve();
+        resolve(self);
       }
     });
   });

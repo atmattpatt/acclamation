@@ -67,7 +67,7 @@ var CardForm = function(client) {
       return false;
     }
 
-    $.post('/cards', {card: card})
+    $.post('/session/' + client.sessionId + '/cards', {card: card})
       .success(self.done)
       .error(self.error);
     e.preventDefault();

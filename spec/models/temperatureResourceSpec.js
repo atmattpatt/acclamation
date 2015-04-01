@@ -72,5 +72,18 @@ describe('TemperatureResource', function() {
       });
       waitsFor(function() { return done === true; }, 1000);
     });
+
+    it('resolves with the TemperatureResource', function() {
+      var done = false;
+
+      runs(function() {
+        var temperatureResource = new TemperatureResource(session);
+        temperatureResource.increment('4').then(function(resource) {
+          expect(resource).toEqual(temperatureResource);
+          done = true;
+        });
+      });
+      waitsFor(function() { return done === true; }, 1000);
+    });
   });
 });
