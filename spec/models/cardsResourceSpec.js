@@ -5,6 +5,7 @@ var redis = require('../../src/redisClient');
 var CardResource = require('../../src/models/cardResource');
 var CardsResource = require('../../src/models/cardsResource');
 var SessionResource = require('../../src/models/sessionResource');
+var SessionsResource = require('../../src/models/sessionsResource');
 
 describe('CardsResource', function() {
   var session;
@@ -12,7 +13,7 @@ describe('CardsResource', function() {
   beforeEach(function() {
     session = undefined;
     runs(function() {
-      (new SessionResource()).create().then(function(createdSession) { session = createdSession; });
+      (new SessionsResource()).create().then(function(createdSession) { session = createdSession; });
     });
     waitsFor(function() { return session !== undefined; });
   });
@@ -85,7 +86,7 @@ describe('CardsResource', function() {
       title: 'Card Title'
     };
 
-    it('returns a CardResource representing the card', function() {
+    it('resolves with a CardResource representing the card', function() {
       var done = false;
 
       runs(function() {

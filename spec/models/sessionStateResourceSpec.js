@@ -2,7 +2,7 @@
 'use strict';
 
 var redis = require('../../src/redisClient');
-var SessionResource = require('../../src/models/sessionResource');
+var SessionsResource = require('../../src/models/sessionsResource');
 var SessionStateResource = require('../../src/models/sessionStateResource');
 
 describe('SessionStateResource', function() {
@@ -13,7 +13,7 @@ describe('SessionStateResource', function() {
 
     session = undefined;
     runs(function() {
-      (new SessionResource()).create().then(function(createdSession) { session = createdSession; });
+      (new SessionsResource()).create().then(function(createdSession) { session = createdSession; });
     });
     waitsFor(function() { return session !== undefined; });
 

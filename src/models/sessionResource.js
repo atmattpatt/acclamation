@@ -2,7 +2,6 @@
 
 var promise = require('promise');
 var redis = require('../redisClient');
-var uuid = require('uuid');
 var CardResource = require('./cardResource');
 var CardsResource = require('./cardsResource');
 var Session = require('./session');
@@ -29,16 +28,14 @@ SessionResource.prototype.get = function() {
   });
 };
 
-SessionResource.prototype.create = function() {
-  var sessionId = uuid.v4();
+SessionResource.prototype.destroy = function() {
   var self = this;
   return new promise(function(resolve, reject) {
-    redis.sadd('acclamation:sessions', sessionId, function(err, res) {
+    redis.srem('acclamation:sessions', self.id, function(err, res) {
       if (err !== null) {
         reject(err);
       } else {
-        self.id = sessionId;
-        resolve(new Session({id: sessionId}));
+        resolve();
       }
     });
   });

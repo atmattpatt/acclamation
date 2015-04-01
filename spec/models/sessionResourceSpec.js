@@ -57,41 +57,21 @@ describe('SessionResource', function() {
     });
   });
 
-  describe('create()', function() {
-    it('generates a session UUID', function() {
+  describe('destroy()', function() {
+    beforeEach(function() {
       var done = false;
-
       runs(function() {
-        (new SessionResource()).create().then(function(session) {
-          expect(
-            /^[A-F0-9]{8}\-[A-F0-9]{4}\-[A-F0-9]{4}\-[A-F0-9]{4}\-[A-F0-9]{12}$/i.test(session.id)
-          ).toBe(true);
-          done = true;
-        });
+        redis.sadd('acclamation:sessions', 'test-session-id', function() { done = true; });
       });
       waitsFor(function() { return done === true; }, 1000);
     });
 
-    it('tracks the sessionId', function() {
+    it('removes the session UUID from acclamation:sessions', function() {
       var done = false;
-
       runs(function() {
-        var sessionResource = new SessionResource();
-        sessionResource.create().then(function(session) {
-          expect(sessionResource.id).toEqual(session.id);
-          done = true;
-        });
-      });
-      waitsFor(function() { return done === true; }, 1000);
-    });
-
-    it('adds the session UUID to acclamation:sessions', function() {
-      var done = false;
-
-      runs(function() {
-        (new SessionResource()).create().then(function(session) {
-          (new SessionResource(session.id)).get().then(function(foundSession) {
-            expect(foundSession.id).toEqual(session.id);
+        (new SessionResource('test-session-id')).destroy().then(function() {
+          redis.sismember('acclamation:sessions', 'test-session-id', function(err, res) {
+            expect(res).toEqual(0);
             done = true;
           });
         });
