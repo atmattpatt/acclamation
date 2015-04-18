@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "stop": "killall node || true"
+    "stop": "killall node || true",
+    "test": "jasmine-node --forceexit spec/**/*.js"
   },
   "repository": {
     "type": "git",

@@ -2,7 +2,7 @@
 
 var promise = require('promise');
 var redis = require('../redisClient');
-var Temperature = require('./Temperature');
+var Temperature = require('./temperature');
 
 var TemperatureResource = function(session) {
   this.session = session;
