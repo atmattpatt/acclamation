@@ -9,7 +9,7 @@ var CardWall = function(client) {
   });
 
   this.initialize = function() {
-    self.loadAll().success(self.rendarAll).error(self.error).then(self.socketBind);
+    self.loadAll().success(self.renderAll).error(self.error).then(self.socketBind);
   };
 
   this.on = function() {
@@ -25,7 +25,7 @@ var CardWall = function(client) {
   };
 
   this.renderAll = function(data) {
-    $.each(data.cards, function(id, card) {
+    $.each(data, function(id, card) {
       self.appendCard(card);
     });
   };

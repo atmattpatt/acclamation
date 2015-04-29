@@ -3,6 +3,7 @@
 var promise = require('promise');
 var redis = require('../redisClient');
 var Card = require('./card');
+var CardVoteResource = require('./cardVoteResource');
 
 var CardResource = function(session, cardId) {
   this.session = session;
@@ -43,11 +44,15 @@ CardResource.prototype.update = function(values) {
         if (err !== null) {
           reject(err);
         } else {
-          resolve(card);
+          resolve(self);
         }
       });
     });
   });
+};
+
+CardResource.prototype.vote = function() {
+  return new CardVoteResource(this.session, this);
 };
 
 module.exports = CardResource;

@@ -2,8 +2,10 @@
 
 var express = require('express');
 var router = express.Router();
+var CardSerializer = require('../serializers/cardSerializer');
 var EventPublisher = require('../eventPublisher');
 var SessionResource = require('../models/sessionResource');
+var SessionsResource = require('../models/sessionsResource');
 var SessionExport = require('../models/sessionExport');
 
 var events = new EventPublisher('acclamation:events');
@@ -13,7 +15,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/start', function(req, res) {
-  (new SessionResource()).create().then(function(session) {
+  (new SessionsResource()).create().then(function(session) {
     res.redirect('/moderator/' + session.id);
   });
 });
@@ -120,8 +122,8 @@ router.get('/:sessionId/cards', function(req, res) {
 
 router.post('/:sessionId/cards', function(req, res) {
   (new SessionResource(req.params.sessionId)).cards().create(req.param('card')).then(function (card) {
-    card.get().then(function(card) {
-      events.publish('card.created', card);
+    (new CardSerializer(card)).serialize().then(function(serialized) {
+      events.publish('card.created', serialized);
     });
     res.send(202);
   }).catch(function() {
@@ -133,7 +135,9 @@ router.post('/:sessionId/cards/:cardId', function(req, res) {
   (new SessionResource(req.params.sessionId)).card(req.params.cardId).update({
     title: req.param('title')
   }).then(function (card) {
-    events.publish('card.updated', card);
+    (new CardSerializer(card)).serialize().then(function(serialized) {
+      events.publish('card.updated', serialized);
+    });
   });
 
   res.send(202);
@@ -144,8 +148,26 @@ router.post('/:sessionId/cards/:cardId/fold', function(req, res) {
     type: 'child-card',
     parent: req.param('parent')
   }).then(function (card) {
-    events.publish('card.folded', card);
+    (new CardSerializer(card)).serialize().then(function(serialized) {
+      events.publish('card.folded', serialized);
+    });
   });
+
+  res.send(202);
+});
+
+router.post('/:sessionId/cards/:cardId/vote', function(req, res) {
+  var incrBy = req.param('value') === '-1' ? (-1) : 1;
+
+  (new SessionResource(req.params.sessionId))
+    .card(req.params.cardId)
+    .vote()
+    .increment(incrBy)
+    .then(function(cardVote) {
+      (new CardSerializer(cardVote.card)).serialize().then(function(serialized) {
+        events.publish('card.vote', serialized);
+      });
+    });
 
   res.send(202);
 });

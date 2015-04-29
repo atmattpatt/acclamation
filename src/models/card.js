@@ -8,7 +8,6 @@ var Card = function(options) {
   this.topic = options.topic;
   this.title = options.title;
   this.parent = options.parent;
-  this.votes = 0;
   this.author = options.author;
 };
 

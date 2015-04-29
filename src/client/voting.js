@@ -67,7 +67,7 @@ var Voting = function(client) {
 
   this.saveVote = function($card, value) {
     var cardId = $card.data('card-id');
-    $.post('/cards/' + cardId + '/vote', {value: value}).success(function() {
+    $.post('/session/' + client.sessionId + '/cards/' + cardId + '/vote', {value: value}).success(function() {
       self.updateVoteMap($card, value);
     });
   };

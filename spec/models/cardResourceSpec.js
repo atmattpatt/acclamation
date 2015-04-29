@@ -3,6 +3,7 @@
 
 var redis = require('../../src/redisClient');
 var CardResource = require('../../src/models/cardResource');
+var CardVoteResource = require('../../src/models/cardVoteResource');
 var SessionsResource = require('../../src/models/sessionsResource');
 
 describe('CardResource', function() {
@@ -85,15 +86,45 @@ describe('CardResource', function() {
           topic: 'new-topic',
           title: 'New Title',
           parent: 'new-parent-card-id'
-        }).then(function(card) {
-          expect(card.type).toEqual('new-type');
-          expect(card.topic).toEqual('new-topic');
-          expect(card.title).toEqual('New Title');
-          expect(card.parent).toEqual('new-parent-card-id');
+        }).then(function() {
+          cardResource.get().then(function(card) {
+            expect(card.type).toEqual('new-type');
+            expect(card.topic).toEqual('new-topic');
+            expect(card.title).toEqual('New Title');
+            expect(card.parent).toEqual('new-parent-card-id');
+            done = true;
+          });
+        });
+      });
+      waitsFor(function() { return done === true; }, 1000);
+    });
+
+    it('resolves with a CardResource', function() {
+      var done = false;
+
+      runs(function() {
+        var cardResource = new CardResource(session, 'test-card-id');
+        cardResource.update({
+          type: 'new-type',
+          topic: 'new-topic',
+          title: 'New Title',
+          parent: 'new-parent-card-id'
+        }).then(function(resource) {
+          expect(resource).toEqual(cardResource);
           done = true;
         });
       });
       waitsFor(function() { return done === true; }, 1000);
+    });
+  });
+
+  describe('votes()', function() {
+    it('returns a CardVoteResource for the card', function() {
+      var cardResource = new CardResource(session, 'test-card-id');
+      var cardVoteResource = cardResource.vote();
+      expect(cardVoteResource.constructor).toEqual(CardVoteResource);
+      expect(cardVoteResource.session).toEqual(session);
+      expect(cardVoteResource.card).toEqual(cardResource);
     });
   });
 });
