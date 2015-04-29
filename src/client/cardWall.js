@@ -87,7 +87,7 @@ var CardWall = function(client) {
       '<i class="fa fa-2x ',
       iconMap[card.topic],
       '"></i>',
-      window.emojiParser(card.title, '/images/emoji'),
+      window.emojiParser(card.title, '/images/emoji') + ' - ' + window.emojiParser(card.author, '/images/emoji'),
       '<span class="vote-badge">', client.voting.signedVotesForCard(card.id), '</span>',
     ].join('');
   };

@@ -39,6 +39,7 @@ var CardForm = function(client) {
     $textarea
       .slideDown('fast')
       .focus();
+
     $(e.currentTarget).addClass('selected');
     e.preventDefault();
   };
@@ -58,7 +59,8 @@ var CardForm = function(client) {
   this.persistCard = function(e) {
     var card = {
       topic: $cardForm.find('#cardtopics button.selected').val(),
-      title: $cardForm.find('textarea').val().trim()
+      title: $cardForm.find('textarea').val().trim(),
+      author: localStorage.getItem('acclamation.author.name')
     };
 
     if (card.topic === '' || card.title === '') {
