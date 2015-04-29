@@ -31,7 +31,7 @@ SessionResource.prototype.get = function() {
 SessionResource.prototype.destroy = function() {
   var self = this;
   return new promise(function(resolve, reject) {
-    redis.srem('acclamation:sessions', self.id, function(err, res) {
+    redis.srem(self.redisKey, self.id, function(err, res) {
       if (err !== null) {
         reject(err);
       } else {

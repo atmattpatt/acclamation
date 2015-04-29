@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/pure.css"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/acclamation.css"/>
-    <script type="text/javascript" src="/javascripts/acclamation.js"></script>
   </head>
   <body class="message">
     <div class="pure-g">
@@ -17,7 +16,14 @@
           either join an existing session, or create a new session.
         </p>
         <ul>
-          <li><code>a1b2c3d4</code> Some Named Session</li>
+          <% for(var i = 0; i < sessions.length; i++) { %>
+          <li>
+            <code><%= sessions[i].id.substr(0, 8) %></code>
+            Some Named Session
+            <a href="/moderator/<%= sessions[i].id %>">Join as Moderator</a>
+            <a href="/client/<%= sessions[i].id %>">Join as Participant</a>
+          </li>
+          <% } %>
         </ul>
         <p>
           <form action="/session" method="POST" class="pure-form">

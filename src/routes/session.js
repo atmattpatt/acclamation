@@ -11,10 +11,26 @@ var SessionsResource = require('../models/sessionsResource');
 var events = new EventPublisher('acclamation:events');
 
 router.get('/', function(req, res) {
-  res.render('session/index');
+  (new SessionsResource()).all().then(function(sessions) {
+    res.render('session/index', {sessions: sessions});
+  });
 });
 
-router.get('/start', function(req, res) {
+router.post('/', function(req, res) {
+  (new SessionsResource()).create().then(function(session) {
+    res.redirect('/session/' + session.id);
+  });
+});
+
+router.get('/:sessionId', function(req, res) {
+  (new SessionResource(req.params.sessionId)).get().then(function(session) {
+    res.render('session/show', {session: session});
+  }).catch(function() {
+    res.send(404);
+  });
+});
+
+router.post('/', function(req, res) {
   (new SessionsResource()).create().then(function(session) {
     res.redirect('/moderator/' + session.id);
   });
@@ -61,10 +77,8 @@ router.get('/:sessionId/end', function(req, res) {
 });
 
 router.get('/:sessionId/destroy', function(req, res) {
-  (new SessionResource(req.params.sessionId)).get().then(function(session) {
-    session.destroy().then(function() {
-      res.redirect('/session');
-    });
+  (new SessionResource(req.params.sessionId)).destroy().then(function(session) {
+    res.redirect('/');
   }).catch(function() {
     res.send(404);
   });
