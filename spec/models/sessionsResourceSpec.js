@@ -10,9 +10,9 @@ describe('SessionsResource', function() {
     beforeEach(function() {
       var created = 0;
       runs(function() {
-        redis.sadd('acclamation:sessions', 'test-session-1', function() { created++; });
-        redis.sadd('acclamation:sessions', 'test-session-2', function() { created++; });
-        redis.sadd('acclamation:sessions', 'test-session-3', function() { created++; });
+        redis.hset('acclamation:sessions', 'test-session-1', '{"id":"test-session-1"}', function() { created++; });
+        redis.hset('acclamation:sessions', 'test-session-2', '{"id":"test-session-2"}', function() { created++; });
+        redis.hset('acclamation:sessions', 'test-session-3', '{"id":"test-session-3"}', function() { created++; });
       });
       waitsFor(function() { return created === 3; }, 1000);
     });
@@ -42,11 +42,25 @@ describe('SessionsResource', function() {
       var done = false;
 
       runs(function() {
-        (new SessionsResource()).create().then(function(session) {
+        (new SessionsResource()).create({name: 'test session'}).then(function(session) {
           expect(
             /^[A-F0-9]{8}\-[A-F0-9]{4}\-[A-F0-9]{4}\-[A-F0-9]{4}\-[A-F0-9]{12}$/i.test(session.id)
           ).toBe(true);
           done = true;
+        });
+      });
+      waitsFor(function() { return done === true; }, 1000);
+    });
+
+    it('provides a default name', function() {
+      var done = false;
+
+      runs(function() {
+        (new SessionsResource()).create({}).then(function(sessionResource) {
+          sessionResource.get().then(function(session) {
+            expect(session.name).toEqual('Unnamed session');
+            done = true;
+          });
         });
       });
       waitsFor(function() { return done === true; }, 1000);
@@ -57,7 +71,7 @@ describe('SessionsResource', function() {
 
       runs(function() {
         var sessionsResource = new SessionsResource();
-        sessionsResource.create().then(function(sessionResource) {
+        sessionsResource.create({}).then(function(sessionResource) {
           expect(sessionResource.constructor).toEqual(SessionResource);
           done = true;
         });
@@ -65,13 +79,14 @@ describe('SessionsResource', function() {
       waitsFor(function() { return done === true; }, 1000);
     });
 
-    it('adds the session UUID to acclamation:sessions', function() {
+    it('adds the session redis', function() {
       var done = false;
 
       runs(function() {
-        (new SessionsResource()).create().then(function(session) {
+        (new SessionsResource()).create({name: 'test session'}).then(function(session) {
           (new SessionResource(session.id)).get().then(function(foundSession) {
             expect(foundSession.id).toEqual(session.id);
+            expect(foundSession.name).toEqual('test session');
             done = true;
           });
         });

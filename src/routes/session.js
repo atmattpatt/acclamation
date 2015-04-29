@@ -17,7 +17,9 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  (new SessionsResource()).create().then(function(session) {
+  (new SessionsResource()).create({
+    name: req.param('name')
+  }).then(function(session) {
     res.redirect('/session/' + session.id);
   });
 });
@@ -27,12 +29,6 @@ router.get('/:sessionId', function(req, res) {
     res.render('session/show', {session: session});
   }).catch(function() {
     res.send(404);
-  });
-});
-
-router.post('/', function(req, res) {
-  (new SessionsResource()).create().then(function(session) {
-    res.redirect('/moderator/' + session.id);
   });
 });
 

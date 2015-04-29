@@ -29,7 +29,7 @@ describe('SessionResource', function() {
       var doneAdding = false, doneFinding = false;
 
       runs(function() {
-        redis.sadd('acclamation:sessions', 'test-session-id', function() {
+        redis.hset('acclamation:sessions', 'test-session-id', '{"id":"test-session-id"}', function() {
           doneAdding = true;
         });
       });
@@ -61,7 +61,7 @@ describe('SessionResource', function() {
     beforeEach(function() {
       var done = false;
       runs(function() {
-        redis.sadd('acclamation:sessions', 'test-session-id', function() { done = true; });
+        redis.hset('acclamation:sessions', 'test-session-id', '{"id":"test-session-id"}', function() { done = true; });
       });
       waitsFor(function() { return done === true; }, 1000);
     });

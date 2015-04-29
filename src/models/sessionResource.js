@@ -16,13 +16,17 @@ var SessionResource = function(sessionId) {
 SessionResource.prototype.get = function() {
   var self = this;
   return new promise(function(resolve, reject) {
-    redis.sismember(self.redisKey, self.id, function(err, res) {
+    redis.hget(self.redisKey, self.id, function(err, res) {
       if (err !== null) {
         reject(err);
-      } else if (res === 1) {
-        resolve(new Session({id: self.id}));
-      } else {
+      } else if (res === null) {
         reject(new Error('Session not found'));
+      } else {
+        try {
+          resolve(new Session(JSON.parse(res)));
+        } catch(e) {
+          reject(e);
+        }
       }
     });
   });
@@ -31,7 +35,7 @@ SessionResource.prototype.get = function() {
 SessionResource.prototype.destroy = function() {
   var self = this;
   return new promise(function(resolve, reject) {
-    redis.srem(self.redisKey, self.id, function(err, res) {
+    redis.hdel(self.redisKey, self.id, function(err, res) {
       if (err !== null) {
         reject(err);
       } else {

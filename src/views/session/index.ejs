@@ -19,7 +19,7 @@
           <% for(var i = 0; i < sessions.length; i++) { %>
           <li>
             <code><%= sessions[i].id.substr(0, 8) %></code>
-            Some Named Session
+            <%= sessions[i].name %>
             <a href="/moderator/<%= sessions[i].id %>">Join as Moderator</a>
             <a href="/client/<%= sessions[i].id %>">Join as Participant</a>
           </li>
@@ -29,7 +29,7 @@
           <form action="/session" method="POST" class="pure-form">
             <fieldset>
               <legend>Start New Session</legend>
-              <input type="text" id="name" placeholder="Session Name" />
+              <input type="text" name="name" placeholder="Session Name" />
               <button type="submit" class="pure-button pure-button-primary">
                 Start Session
               </button>

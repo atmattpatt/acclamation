@@ -18,7 +18,7 @@ describe('SessionSerializer', function() {
     card = undefined;
 
     runs(function() {
-      (new SessionsResource()).create().then(function(createdSession) { session = createdSession; });
+      (new SessionsResource()).create({}).then(function(createdSession) { session = createdSession; });
     });
     waitsFor(function() { return session !== undefined; }, 1000);
 

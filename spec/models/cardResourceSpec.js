@@ -12,7 +12,7 @@ describe('CardResource', function() {
   beforeEach(function() {
     session = undefined;
     runs(function() {
-      (new SessionsResource()).create().then(function(createdSession) { session = createdSession; });
+      (new SessionsResource()).create({}).then(function(createdSession) { session = createdSession; });
     });
     waitsFor(function() { return session !== undefined; });
   });

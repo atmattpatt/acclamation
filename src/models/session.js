@@ -5,6 +5,7 @@ var qr = require('qr-image');
 
 var Session = function(defaults) {
   this.id = defaults.id;
+  this.name = defaults.name;
 };
 
 Session.prototype.qr = function() {

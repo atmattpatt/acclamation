@@ -13,27 +13,36 @@ var SessionsResource = function() {
 SessionsResource.prototype.all = function() {
   var self = this;
   return new promise(function(resolve, reject) {
-    redis.smembers(self.redisKey, function(err, res) {
+    redis.hgetall(self.redisKey, function(err, res) {
+      var sessions = [];
+
       if (err !== null) {
         reject(err);
       } else {
-        resolve(res.map(function(sessionId) {
-          return new Session({id: sessionId});
-        }));
+        for (var session in res) {
+          if (res.hasOwnProperty(session)) {
+            try {
+              sessions.push(new Session(JSON.parse(res[session])));
+            } catch (e) {}
+          }
+        }
+        resolve(sessions);
       }
     });
   });
 };
 
-SessionsResource.prototype.create = function() {
+SessionsResource.prototype.create = function(sessionData) {
   var self = this;
-  var sessionId = uuid.v4();
+  sessionData.id = uuid.v4();
+  sessionData.name = sessionData.name || 'Unnamed session';
+
   return new promise(function(resolve, reject) {
-    redis.sadd(self.redisKey, sessionId, function(err, res) {
+    redis.hset(self.redisKey, sessionData.id, JSON.stringify(sessionData), function(err, res) {
       if (err !== null) {
         reject(err);
       } else {
-        resolve(new SessionResource(sessionId));
+        resolve(new SessionResource(sessionData.id));
       }
     });
   });
