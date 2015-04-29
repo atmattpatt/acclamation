@@ -8,6 +8,7 @@ var SessionsResource = require('../../src/models/sessionsResource');
 describe('CardSerializer', function() {
   var session;
   var card;
+  var cardResource;
 
   beforeEach(function() {
     var done;
@@ -21,33 +22,51 @@ describe('CardSerializer', function() {
     waitsFor(function() { return session !== undefined; }, 1000);
 
     runs(function() {
-      (new CardsResource(session)).create({}).then(function(createdCard) { card = createdCard; });
+      (new CardsResource(session)).create({
+        type: 'card',
+        title: 'Test card'
+      }).then(function(createdCardResource) {
+        cardResource = createdCardResource;
+        cardResource.get().then(function(createdCard) {
+          card = createdCard;
+        });
+      });
     });
     waitsFor(function() { return card !== undefined; }, 1000);
 
     runs(function() {
-      card.vote().increment(5).then(function() { done = true; });
+      cardResource.vote().increment(5).then(function() { done = true; });
     });
     waitsFor(function() { return done === true; }, 1000);
   });
 
   describe('serialize()', function() {
     it('serializes the card data', function() {
-      var serializer = new CardSerializer(card);
-      serializer.serialize().then(function(serialized) {
-        expect(serialized.id).toEqual(card.id);
-        expect(serialized.type).toEqual(card.type);
-        expect(serialized.topic).toEqual(card.topic);
-        expect(serialized.title).toEqual(card.title);
-        expect(serialized.parent).toEqual(card.parent);
+      var done = false;
+      runs(function() {
+        var serializer = new CardSerializer(cardResource);
+        serializer.serialize().then(function(serialized) {
+          expect(serialized.id).toEqual(card.id);
+          expect(serialized.type).toEqual(card.type);
+          expect(serialized.topic).toEqual(card.topic);
+          expect(serialized.title).toEqual(card.title);
+          expect(serialized.parent).toEqual(card.parent);
+          done = true;
+        });
       });
+      waitsFor(function() { return done === true; }, 1000);
     });
 
     it('serializes the vote count', function() {
-      var serializer = new CardSerializer(card);
-      serializer.serialize().then(function(serialized) {
-        expect(serialized.votes).toEqual(5);
+      var done = false;
+      runs(function() {
+        var serializer = new CardSerializer(cardResource);
+        serializer.serialize().then(function(serialized) {
+          expect(serialized.votes).toEqual(5);
+          done = true;
+        });
       });
+      waitsFor(function() { return done === true; }, 1000);
     });
   });
 });
