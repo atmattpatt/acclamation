@@ -39,7 +39,7 @@ var Temperature = function(client) {
   };
 
   this.hasVoted = function() {
-    return localStorage.getItem('acclamation.session[' + client.sessionId + '].temperature.hasVoted') === "true";
+    return localStorage.getItem('acclamation.session[' + client.sessionId + '].temperature.hasVoted') === 'true';
   };
 };
 

@@ -23,6 +23,9 @@ var Client = function() {
 
   this.initialize = function() {
     self.sessionId = self.detectSessionId();
+    self.socket.on('connect', function() {
+      self.socket.emit('ready', {session: self.sessionId});
+    });
 
     var next = self.showTemperature;
 

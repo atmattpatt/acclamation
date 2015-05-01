@@ -94,7 +94,7 @@ router.post('/:sessionId/state', function(req, res) {
     allowNewCards: req.param('allowNewCards'),
     allowVoting: req.param('allowVoting')
   }).then(function(state) {
-    events.publish('sessionState.changed', state);
+    events.publish('sessionState.changed', sessionResource.id, state);
     res.send(202);
   }).catch(function() {
     res.send(404);
@@ -113,7 +113,7 @@ router.post('/:sessionId/temperature/vote/:value', function(req, res) {
   var sessionResource = new SessionResource(req.params.sessionId);
   sessionResource.temperature().increment(req.params.value).then(function(temperatureResource) {
     temperatureResource.get().then(function(temperature) {
-      events.publish('temperature', temperature.values);
+      events.publish('temperature', sessionResource.id, temperature.values);
     });
     res.send(202);
   }).catch(function() {
@@ -130,9 +130,10 @@ router.get('/:sessionId/cards', function(req, res) {
 });
 
 router.post('/:sessionId/cards', function(req, res) {
-  (new SessionResource(req.params.sessionId)).cards().create(req.param('card')).then(function (card) {
+  var sessionResource = new SessionResource(req.params.sessionId);
+  sessionResource.cards().create(req.param('card')).then(function (card) {
     (new CardSerializer(card)).serialize().then(function(serialized) {
-      events.publish('card.created', serialized);
+      events.publish('card.created', sessionResource.id, serialized);
     });
     res.send(202);
   }).catch(function() {
@@ -141,11 +142,12 @@ router.post('/:sessionId/cards', function(req, res) {
 });
 
 router.post('/:sessionId/cards/:cardId', function(req, res) {
-  (new SessionResource(req.params.sessionId)).card(req.params.cardId).update({
+  var sessionResource = new SessionResource(req.params.sessionId);
+  sessionResource.card(req.params.cardId).update({
     title: req.param('title')
   }).then(function (card) {
     (new CardSerializer(card)).serialize().then(function(serialized) {
-      events.publish('card.updated', serialized);
+      events.publish('card.updated', sessionResource.id, serialized);
     });
   });
 
@@ -153,12 +155,13 @@ router.post('/:sessionId/cards/:cardId', function(req, res) {
 });
 
 router.post('/:sessionId/cards/:cardId/fold', function(req, res) {
-  (new SessionResource(req.params.sessionId)).card(req.params.cardId).update({
+  var sessionResource = new SessionResource(req.params.sessionId);
+  sessionResource.card(req.params.cardId).update({
     type: 'child-card',
     parent: req.param('parent')
   }).then(function (card) {
     (new CardSerializer(card)).serialize().then(function(serialized) {
-      events.publish('card.folded', serialized);
+      events.publish('card.folded', sessionResource.id, serialized);
     });
   });
 
@@ -166,15 +169,16 @@ router.post('/:sessionId/cards/:cardId/fold', function(req, res) {
 });
 
 router.post('/:sessionId/cards/:cardId/vote', function(req, res) {
+  var sessionResource = new SessionResource(req.params.sessionId);
   var incrBy = req.param('value') === '-1' ? (-1) : 1;
 
-  (new SessionResource(req.params.sessionId))
+  sessionResource
     .card(req.params.cardId)
     .vote()
     .increment(incrBy)
     .then(function(cardVote) {
       (new CardSerializer(cardVote.card)).serialize().then(function(serialized) {
-        events.publish('card.vote', serialized);
+        events.publish('card.vote', sessionResource.id, serialized);
       });
     });
 

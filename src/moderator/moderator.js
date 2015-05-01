@@ -17,7 +17,9 @@ var Moderator = function() {
 
   this.initialize = function() {
     self.sessionId = self.detectSessionId();
-    self.socket.emit('ready');
+    self.socket.on('connect', function() {
+      self.socket.emit('ready', {session: self.sessionId});
+    });
     self.cardWall.initialize();
     self.menu.initialize();
     self.temperature.initialize();

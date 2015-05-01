@@ -109,7 +109,6 @@ describe('SessionSerializer', function() {
       runs(function() {
         var serializer = new SessionSerializer(session);
         serializer.serialize().then(function(serialized) {
-          console.log('serialized', serialized);
           expect(serialized.cards[0].children[0].id).toEqual(childCard.id);
           done = true;
         });

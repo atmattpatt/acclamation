@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express.io');
 var path = require('path');
 var favicon = require('static-favicon');
@@ -13,7 +15,14 @@ var routes = {
 
 var app = express();
 app.http().io();
+
+// Event broadcasting
 (new EventBroadcaster(app)).start();
+app.io.route('ready', function(req) {
+  var sessionId = (req.data || {}).session;
+  req.io.socket.join(sessionId);
+  console.log('WebSocket client connected to session', sessionId);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,8 +40,6 @@ app.use('/', routes.index);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  'use strict';
-
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -44,8 +51,6 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    'use strict';
-
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -57,8 +62,6 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  'use strict';
-
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
