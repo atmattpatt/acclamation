@@ -30,6 +30,7 @@ CardSerializer.prototype.serialize = function() {
           topic: results.card.topic,
           title: results.card.title,
           parent: results.card.parent,
+          author: results.card.author,
           votes: results.cardVote.votes
         });
       }

@@ -24,7 +24,8 @@ describe('CardSerializer', function() {
     runs(function() {
       (new CardsResource(session)).create({
         type: 'card',
-        title: 'Test card'
+        title: 'Test card',
+        author: 'Zoidberg'
       }).then(function(createdCardResource) {
         cardResource = createdCardResource;
         cardResource.get().then(function(createdCard) {
@@ -51,6 +52,7 @@ describe('CardSerializer', function() {
           expect(serialized.topic).toEqual(card.topic);
           expect(serialized.title).toEqual(card.title);
           expect(serialized.parent).toEqual(card.parent);
+          expect(serialized.author).toEqual(card.author);
           done = true;
         });
       });
