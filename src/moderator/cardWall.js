@@ -69,7 +69,7 @@ var CardWall = function(moderator) {
   };
 
   this.editCard = function(e) {
-    var $card = $(e.target);
+    var $card = $(e.target).closest('.card');
     var $input;
 
     if ($card.find('textarea').length > 0) {
@@ -77,7 +77,7 @@ var CardWall = function(moderator) {
     }
 
     $input = $('<textarea/>')
-      .append($card.html())
+      .append($card.find('.card-title').attr('data-raw-title'))
       .height($card.height());
     $card.html('').append($input);
     $input.focus();
@@ -104,7 +104,12 @@ var CardWall = function(moderator) {
   };
 
   this.htmlForCard = function(card) {
-    return '<div class="vote-count' + (self.showVotes ? '' : ' hidden') + '">' + card.votes + '</div>' + window.emojiParser(card.title, '/images/emoji') + ' - ' + window.emojiParser(card.author, '/images/emoji');
+    return [
+      '<div class="vote-count', (self.showVotes ? '' : ' hidden'), '">', card.votes, '</div>',
+      '<span class="card-title" data-raw-title="', card.title, '">', window.emojiParser(card.title, '/images/emoji'), '</span>',
+      ' - ',
+      '<span class="card-author">', window.emojiParser(card.author, '/images/emoji'), '</span>'
+    ].join('');
   };
 
   this.setVoting = function(showVotes) {
