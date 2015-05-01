@@ -75,6 +75,7 @@ var CardForm = function(client) {
 
   this.done = function() {
     client.hideCardForm();
+    self.cancelTopic();
   };
 
   this.error = function(err) {
