@@ -11,8 +11,8 @@ EventBroadcaster.prototype.start = function() {
   var app = this.app;
 
   this.redis.on('message', function(channel, message) {
-    var parsed, event, data;
-    if (channel !== 'acclamation.events') {
+    var parsed, event, session, data;
+    if (channel !== 'acclamation:events') {
       return;
     }
 
@@ -34,12 +34,18 @@ EventBroadcaster.prototype.start = function() {
       return;
     }
 
+    session = parsed.session;
+    if (session === undefined) {
+      console.log('Rejecting message, undefined session', message);
+      return;
+    }
+
     data = parsed.data;
 
-    console.log('Broadcasting event', event, data);
-    app.io.broadcast(event, data);
+    console.log('Broadcasting event for session', event, session, data);
+    app.io.room(session).broadcast(event, data);
   });
-  this.redis.subscribe('acclamation.events');
+  this.redis.subscribe('acclamation:events');
 };
 
 module.exports = EventBroadcaster;

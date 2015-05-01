@@ -6,8 +6,11 @@ var CardWall = function(client) {
 
   $(function() {
     $cardWall = $('#cardwall');
-    self.loadAll();
   });
+
+  this.initialize = function() {
+    self.loadAll().success(self.renderAll).error(self.error).then(self.socketBind);
+  };
 
   this.on = function() {
     $cardWall.show();
@@ -18,13 +21,11 @@ var CardWall = function(client) {
   };
 
   this.loadAll = function() {
-    return $.get('/cards')
-      .success(self.renderAll)
-      .error(self.error);
+    return $.get('/session/' + client.sessionId + '/cards');
   };
 
   this.renderAll = function(data) {
-    $.each(data.cards, function(id, card) {
+    $.each(data, function(id, card) {
       self.appendCard(card);
     });
   };
@@ -37,6 +38,7 @@ var CardWall = function(client) {
 
   this.appendCard = function(card) {
     var $card = $('<div/>');
+    $cardWall = $cardWall || $('#cardwall');
 
     if ($cardWall.find('#card-' + card.id).length > 0) {
       return;

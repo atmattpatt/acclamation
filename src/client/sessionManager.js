@@ -11,7 +11,7 @@ var SessionManager = function(client) {
   };
 
   this.load = function() {
-    return $.get('/session/state').then(self.sessionStateChanged);
+    return $.get('/session/' + client.sessionId + '/state').then(self.sessionStateChanged);
   };
 
   this.socketBind = function() {

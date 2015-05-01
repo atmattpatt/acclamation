@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "stop": "killall node || true"
+    "stop": "killall node || true",
+    "test": "jasmine-node --forceexit spec/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "grunt-contrib-watch": "0.6.1",
     "hiredis": "0.1.17",
     "morgan": "1.0.0",
+    "promise": "6.1.0",
     "qr-image": "1.2.0",
     "redis": "0.10.3",
     "socket.io": "1.0.6",

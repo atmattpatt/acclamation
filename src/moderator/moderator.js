@@ -16,10 +16,22 @@ var Moderator = function() {
   this.temperature = new Temperature(this);
 
   this.initialize = function() {
-    self.socket.emit('ready');
-    self.cardWall.socketBind();
-    self.menu.socketBind();
-    self.temperature.socketBind();
+    self.sessionId = self.detectSessionId();
+    self.socket.on('connect', function() {
+      self.socket.emit('ready', {session: self.sessionId});
+    });
+    self.cardWall.initialize();
+    self.menu.initialize();
+    self.temperature.initialize();
+  };
+
+  this.detectSessionId = function() {
+    var matches = window.location.pathname.match(/\/moderator\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i);
+    if (matches === null) {
+      return null;
+    } else {
+      return matches[1];
+    }
   };
 
   this.initialize();

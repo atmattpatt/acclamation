@@ -20,9 +20,13 @@ var Client = function() {
   this.cardForm = new CardForm(this);
   this.voting = new Voting(this);
   this.sessionManager = new SessionManager(this);
-  this.sessionId = window.location.pathname.match(/\/client\/([A-Z0-9\-]+)/i)[1];
 
   this.initialize = function() {
+    self.sessionId = self.detectSessionId();
+    self.socket.on('connect', function() {
+      self.socket.emit('ready', {session: self.sessionId});
+    });
+
     var next = self.showTemperature;
 
     if (self.temperature.hasVoted()) {
@@ -33,7 +37,7 @@ var Client = function() {
       next = self.initSession;
     }
 
-    self.cardWall.socketBind();
+    self.cardWall.initialize();
     self.sessionManager.socketBind();
 
     $(function() {
@@ -89,6 +93,15 @@ var Client = function() {
   this.hideCardForm = function() {
     self.addCard.on();
     self.cardForm.off();
+  };
+
+  this.detectSessionId = function() {
+    var matches = window.location.pathname.match(/\/client\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i);
+    if (matches === null) {
+      return null;
+    } else {
+      return matches[1];
+    }
   };
 
   this.initialize();

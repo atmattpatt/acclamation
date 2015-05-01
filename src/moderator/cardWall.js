@@ -6,7 +6,7 @@ var CardWall = function(moderator) {
   this.voting = false;
 
   this.initialize = function() {
-    self.load().then(self.renderAll);
+    self.load().then(self.renderAll).then(self.socketBind);
     $(self.setupEvents);
   };
 
@@ -19,12 +19,12 @@ var CardWall = function(moderator) {
   };
 
   this.load = function() {
-    $.get('/session/state').then(self.setState);
-    return $.get('/cards');
+    $.get('/session/' + moderator.sessionId + '/state').then(self.setState);
+    return $.get('/session/' + moderator.sessionId + '/cards');
   };
 
-  this.renderAll = function(data) {
-    $.each(data.cards, function(id, card) {
+  this.renderAll = function(cards) {
+    $.each(cards, function(id, card) {
       self.appendCard(card);
     });
     self.sortCards();
@@ -56,7 +56,7 @@ var CardWall = function(moderator) {
     var $primary = $(e.target);
     var $secondary = $(ui.draggable[0]);
 
-    $.post('/cards/' + $secondary.data('card-id') + '/fold', {parent: $primary.data('card-id')});
+    $.post('/session/' + moderator.sessionId + '/cards/' + $secondary.data('card-id') + '/fold', {parent: $primary.data('card-id')});
   };
 
   this.foldCard = function(card) {
@@ -90,7 +90,7 @@ var CardWall = function(moderator) {
     var $card = $input.closest('.card');
     var title = $input.val();
 
-    $.post('/cards/' + $card.data('card-id'), {title: title}).then($input.remove);
+    $.post('/session/' + moderator.sessionId + '/cards/' + $card.data('card-id'), {title: title}).then($input.remove);
   };
 
   this.updateCard = function(card) {
@@ -122,8 +122,6 @@ var CardWall = function(moderator) {
     self.setVoting(state.allowVoting);
     self.sortCards();
   };
-
-  this.initialize();
 };
 
 module.exports = CardWall;

@@ -1,38 +1,12 @@
 'use strict';
 
-var redis = require('../redisClient');
-
-module.exports = function() {
-  var values = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0};
-  var self = this;
-
-  this.getValues = function() {
-    return values;
-  };
-
-  this.load = function(done) {
-    redis.hgetall('temperature', function(err, res) {
-      if (err !== null) {
-        throw err;
-      }
-
-      for (var key in res) {
-        if (values.hasOwnProperty(key)) {
-          values[key] = Number(res[key]);
-        }
-      }
-
-      done(self);
-    });
-  };
-
-  this.increment = function(key, done) {
-    redis.hincrby('temperature', String(key), 1, function(err, res) {
-      if (err !== null) {
-        throw err;
-      }
-
-      done(self);
-    });
-  };
+var Temperature = function(defaults) {
+  this.values = {};
+  this.values['1'] = (defaults.values || {})['1'];
+  this.values['2'] = (defaults.values || {})['2'];
+  this.values['3'] = (defaults.values || {})['3'];
+  this.values['4'] = (defaults.values || {})['4'];
+  this.values['5'] = (defaults.values || {})['5'];
 };
+
+module.exports = Temperature;

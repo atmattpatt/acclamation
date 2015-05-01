@@ -19,7 +19,7 @@ var Temperature = function(client) {
 
   this.vote = function() {
     var value = $(this).val();
-    $.post('/temperature/vote/' + value)
+    $.post('/session/' + client.sessionId + '/temperature/vote/' + value)
       .success(self.done)
       .error(self.error);
   };
@@ -35,11 +35,11 @@ var Temperature = function(client) {
   };
 
   this.recordVote = function() {
-    localStorage.setItem('acclamation.temperature.lastVotingSessionId', client.sessionId);
+    localStorage.setItem('acclamation.session[' + client.sessionId + '].temperature.hasVoted', true);
   };
 
   this.hasVoted = function() {
-    return localStorage.getItem('acclamation.temperature.lastVotingSessionId') === client.sessionId;
+    return localStorage.getItem('acclamation.session[' + client.sessionId + '].temperature.hasVoted') === 'true';
   };
 };
 

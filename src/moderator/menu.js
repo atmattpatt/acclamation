@@ -15,11 +15,12 @@ var Menu = function(moderator) {
   this.initialize = function() {
     self.loadState()
       .then(self.setState)
+      .then(self.socketBind)
       .then(self.adapt);
   };
 
   this.loadState = function() {
-    return $.get('/session/state');
+    return $.get('/session/' + moderator.sessionId + '/state');
   };
 
   this.socketBind = function() {
@@ -44,7 +45,7 @@ var Menu = function(moderator) {
     var $link = $(e.target);
     var params = {};
     params[$link.attr('rel')] = $link.attr('data-state');
-    $.post('/session/state', params);
+    $.post('/session/' + moderator.sessionId + '/state', params);
   };
 
   this.adapt = function() {
@@ -83,8 +84,6 @@ var Menu = function(moderator) {
       }
     });
   };
-
-  this.initialize();
 };
 
 module.exports = Menu;

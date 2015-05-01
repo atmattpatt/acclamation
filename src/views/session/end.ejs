@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/pure.css"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/acclamation.css"/>
-    <script type="text/javascript" src="/javascripts/acclamation.js"></script>
   </head>
   <body class="message">
     <div class="pure-g">
@@ -17,9 +16,9 @@
           to the session.  You can download a JSON summary of the session for posterity.
         </p>
         <p>
-          <a href="/moderator" class="pure-button">Back to Session</a>
-          <a href="/session/export" class="pure-button">Session Summary</a>
-          <a href="/session/destroy" class="pure-button pure-button-primary end-session">End Session</a>
+          <a href="/moderator/<%= session.id %>" class="pure-button">Back to Session</a>
+          <a href="/session/<%= session.id %>/export" class="pure-button">Session Summary</a>
+          <a href="/session/<%= session.id %>/destroy" class="pure-button pure-button-primary end-session">End Session</a>
         </p>
       </div>
     </div>
