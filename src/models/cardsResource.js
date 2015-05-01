@@ -3,7 +3,6 @@
 var promise = require('promise');
 var redis = require('../redisClient');
 var uuid = require('uuid');
-var Card = require('./card');
 var CardResource = require('./cardResource');
 
 var CardsResource = function(session) {
@@ -14,21 +13,13 @@ var CardsResource = function(session) {
 CardsResource.prototype.all = function() {
   var self = this;
   return new promise(function(resolve, reject) {
-    redis.hgetall(self.redisKey, function(err, res) {
-      var cards = [];
+    redis.hkeys(self.redisKey, function(err, res) {
       if (err !== null) {
         reject(err);
       } else {
-        for (var key in res) {
-          if (res.hasOwnProperty(key)) {
-            try {
-              cards.push(new Card(JSON.parse(res[key])));
-            } catch(e) {
-              reject(e);
-            }
-          }
-        }
-        resolve(cards);
+        resolve(res.map(function(cardId) {
+          return new CardResource(self.session, cardId);
+        }));
       }
     });
   });

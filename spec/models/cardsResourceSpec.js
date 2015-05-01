@@ -49,7 +49,7 @@ describe('CardsResource', function() {
       waitsFor(function() { return created === 3; }, 1000);
     });
 
-    it('returns an array of all cards', function() {
+    it('returns an array of CardResource objects for all cards', function() {
       var done = false;
 
       runs(function() {
@@ -59,6 +59,11 @@ describe('CardsResource', function() {
           expect(cards.map(function(card) {
             return card.id;
           }).sort()).toEqual(['test-card-id0', 'test-card-id1', 'test-card-id2']);
+
+          for (var i = 0; i < cards.length; i++) {
+            expect(cards[i].constructor).toEqual(CardResource);
+          }
+
           done = true;
         });
       });

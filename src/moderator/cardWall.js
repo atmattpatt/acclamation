@@ -3,7 +3,7 @@
 var CardWall = function(moderator) {
   var self = this;
 
-  this.voting = false;
+  this.showVotes = false;
 
   this.initialize = function() {
     self.load().then(self.renderAll).then(self.socketBind);
@@ -15,11 +15,9 @@ var CardWall = function(moderator) {
     moderator.socket.on('card.updated', self.updateCard);
     moderator.socket.on('card.folded', self.foldCard);
     moderator.socket.on('card.vote', self.updateCard);
-    moderator.socket.on('sessionState.changed', self.setState);
   };
 
   this.load = function() {
-    $.get('/session/' + moderator.sessionId + '/state').then(self.setState);
     return $.get('/session/' + moderator.sessionId + '/cards');
   };
 
@@ -100,26 +98,22 @@ var CardWall = function(moderator) {
   };
 
   this.sortCards = function(section) {
-    if (self.voting) {
+    if (self.showVotes) {
       $('.card').tsort('.vote-count', {order: 'desc'});
     }
   };
 
   this.htmlForCard = function(card) {
-    return '<div class="vote-count' + (self.voting ? '' : ' hidden') + '">' + card.votes + '</div>' + window.emojiParser(card.title, '/images/emoji') + ' - ' + window.emojiParser(card.author, '/images/emoji');
+    return '<div class="vote-count' + (self.showVotes ? '' : ' hidden') + '">' + card.votes + '</div>' + window.emojiParser(card.title, '/images/emoji') + ' - ' + window.emojiParser(card.author, '/images/emoji');
   };
 
-  this.setVoting = function(allowVoting) {
-    self.voting = allowVoting;
-    if (allowVoting) {
+  this.setVoting = function(showVotes) {
+    self.showVotes = showVotes;
+    if (showVotes) {
       $('.vote-count').show();
     } else {
       $('.vote-count').hide();
     }
-  };
-
-  this.setState = function(state) {
-    self.setVoting(state.allowVoting);
     self.sortCards();
   };
 };

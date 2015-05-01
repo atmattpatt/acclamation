@@ -1,5 +1,6 @@
 'use strict';
 
+var async = require('async');
 var express = require('express');
 var router = express.Router();
 var CardSerializer = require('../serializers/cardSerializer');
@@ -122,8 +123,15 @@ router.post('/:sessionId/temperature/vote/:value', function(req, res) {
 });
 
 router.get('/:sessionId/cards', function(req, res) {
-  (new SessionResource(req.params.sessionId)).cards().all().then(function (cards) {
-    res.json(cards);
+  var sessionResource = new SessionResource(req.params.sessionId);
+  sessionResource.cards().all().then(function (cards) {
+    async.map(cards, function(cardResource, callback) {
+      (new CardSerializer(cardResource)).serialize().then(function(serialized) {
+        callback(null, serialized);
+      });
+    }, function(err, results) {
+      res.json(results);
+    });
   }).catch(function() {
     res.send(404);
   });

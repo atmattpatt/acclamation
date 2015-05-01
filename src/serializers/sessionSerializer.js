@@ -68,8 +68,8 @@ SessionSerializer.prototype.serialize = function() {
               function(cards, callback) {
                 async.map(
                   cards,
-                  function(card, callback) {
-                    (new CardSerializer(self.sessionResource.card(card.id)))
+                  function(cardResource, callback) {
+                    (new CardSerializer(cardResource))
                       .serialize()
                       .then(function(serialized) {
                         callback(null, serialized);

@@ -10,6 +10,8 @@ var Menu = function(moderator) {
 
     $(window).resize(self.adapt);
     $menu.delegate('a.session-state', 'click', self.handleStateChange);
+    $menu.delegate('a.moderator-state', 'click', self.handleLocalStateChange);
+    self.hideVotes();
   });
 
   this.initialize = function() {
@@ -48,6 +50,19 @@ var Menu = function(moderator) {
     $.post('/session/' + moderator.sessionId + '/state', params);
   };
 
+  this.handleLocalStateChange = function(e) {
+    var $link = $(e.target);
+    var state = $link.attr('data-state');
+    var fn;
+
+    switch($link.attr('rel')) {
+      case 'showVotes':
+        fn = (state === 'true') ? self.showVotes : self.hideVotes;
+        break;
+    }
+    fn();
+  };
+
   this.adapt = function() {
     var height = $(window).height();
     var $menu = $('menu');
@@ -71,7 +86,14 @@ var Menu = function(moderator) {
     self.toggleLinks('allowVoting', 'false');
   };
 
-  this.endSession = function() {
+  this.hideVotes = function() {
+    self.toggleLinks('showVotes', 'true');
+    moderator.cardWall.setVoting(false);
+  };
+
+  this.showVotes = function() {
+    self.toggleLinks('showVotes', 'false');
+    moderator.cardWall.setVoting(true);
   };
 
   this.toggleLinks = function(rel, state) {
