@@ -2,6 +2,7 @@
 'use strict';
 
 var AddCard = require('./addCard');
+var Author = require('./author');
 var CardForm = require('./cardForm');
 var CardWall = require('./cardWall');
 var SessionManager = require('./sessionManager');
@@ -13,6 +14,7 @@ var Client = function() {
 
   this.socket = io.connect();
   this.temperature = new Temperature(this);
+  this.author = new Author(this);
   this.cardWall = new CardWall(this);
   this.addCard = new AddCard(this);
   this.cardForm = new CardForm(this);
@@ -24,6 +26,10 @@ var Client = function() {
     var next = self.showTemperature;
 
     if (self.temperature.hasVoted()) {
+      next = self.showAuthor;
+    }
+
+    if (self.author.hasProvided()) {
       next = self.initSession;
     }
 
@@ -38,6 +44,17 @@ var Client = function() {
   this.showTemperature = function() {
     $('#loader').hide();
     self.temperature.on();
+    self.author.off();
+    self.addCard.off();
+    self.cardWall.off();
+    self.cardForm.off();
+    self.voting.off();
+  };
+
+  this.showAuthor = function() {
+    $('#loader').hide();
+    self.temperature.off();
+    self.author.on();
     self.addCard.off();
     self.cardWall.off();
     self.cardForm.off();
@@ -51,6 +68,7 @@ var Client = function() {
   this.showCardWall = function() {
     $('#loader').hide();
     self.temperature.off();
+    self.author.off();
     self.cardWall.on();
 
     if (self.sessionManager.allowVoting && !self.sessionManager.allowNewCards) {

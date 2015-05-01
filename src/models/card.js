@@ -15,6 +15,7 @@ module.exports = function(options) {
   this.title = options.title;
   this.parent = options.parent;
   this.votes = 0;
+  this.author = options.author;
 
   this.load = function(id, done) {
     redis.hget('cards', id, function(err, res) {
@@ -71,6 +72,7 @@ module.exports = function(options) {
       type: this.type,
       topic: this.topic,
       title: this.title,
+      author: this.author,
       parent: this.parent,
       votes: this.votes
     };

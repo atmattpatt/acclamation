@@ -26,7 +26,7 @@ var Temperature = function(client) {
 
   this.done = function() {
     self.recordVote();
-    client.initSession();
+    client.showAuthor();
   };
 
   this.error = function(err) {
