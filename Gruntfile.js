@@ -47,6 +47,7 @@ module.exports = function(grunt) {
           'bower_components/jquery.ui/ui/droppable.js',
           'bower_components/chartjs/Chart.min.js',
           'bower_components/tinysort/dist/jquery.tinysort.js',
+          'bower_components/jquery-textcomplete/dist/jquery.textcomplete.js',
           'bower_components/emoji-parser/main.js',
           'tmp/javascript/moderator.min.js'
         ],
@@ -62,6 +63,7 @@ module.exports = function(grunt) {
           'bower_components/jquery.ui/ui/droppable.js',
           'bower_components/chartjs/Chart.min.js',
           'bower_components/tinysort/dist/jquery.tinysort.js',
+          'bower_components/jquery-textcomplete/dist/jquery.textcomplete.js',
           'bower_components/emoji-parser/main.js',
           'tmp/javascript/moderator.js'
         ],

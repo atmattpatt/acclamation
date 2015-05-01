@@ -1,5 +1,7 @@
 'use strict';
 
+var emojiOptions = require('../static/emoji.js');
+
 var CardWall = function(moderator) {
   var self = this;
 
@@ -79,6 +81,7 @@ var CardWall = function(moderator) {
     $input = $('<textarea/>')
       .append($card.find('.card-title').attr('data-raw-title'))
       .height($card.height());
+    $input.textcomplete(emojiOptions);
     $card.html('').append($input);
     $input.focus();
   };
