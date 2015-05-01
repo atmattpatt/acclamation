@@ -24,13 +24,12 @@ var Author = function(client) {
       value = 'Anonymous';
     }
 
-    localStorage.setItem('acclamation.author.name', value);
-    localStorage.setItem('acclamation.author.lastSessionId', client.sessionId);
+    localStorage.setItem('acclamation.session[' + client.sessionId + '].author.name', value);
     client.initSession();
   };
 
   this.hasProvided = function() {
-    return localStorage.getItem('acclamation.author.lastSessionId') === client.sessionId;
+    return localStorage.getItem('acclamation.session[' + client.sessionId + '].author.name') !== null;
   };
 };
 

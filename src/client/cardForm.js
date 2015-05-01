@@ -60,7 +60,7 @@ var CardForm = function(client) {
     var card = {
       topic: $cardForm.find('#cardtopics button.selected').val(),
       title: $cardForm.find('textarea').val().trim(),
-      author: localStorage.getItem('acclamation.author.name')
+      author: localStorage.getItem('acclamation.session[' + client.sessionId + '].author.name')
     };
 
     if (card.topic === '' || card.title === '') {

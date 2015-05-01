@@ -38,6 +38,7 @@ var CardWall = function(client) {
 
   this.appendCard = function(card) {
     var $card = $('<div/>');
+    $cardWall = $cardWall || $('#cardwall');
 
     if ($cardWall.find('#card-' + card.id).length > 0) {
       return;
